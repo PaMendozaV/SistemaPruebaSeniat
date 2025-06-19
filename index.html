@@ -2402,7 +2402,21 @@ function actualizarGraficosEstadisticas() {
     }
   });
 }
-
+function ocultarFormularioReporte() {
+  document.getElementById('formulario-reporte').style.display = 'none';
+  document.getElementById('nuevo-reporte-form').reset();
+  
+  // Restablecer el evento onsubmit al original
+  const form = document.getElementById('nuevo-reporte-form');
+  form.onsubmit = function(e) {
+    e.preventDefault();
+    agregarReporte(e);
+  };
+  
+  // Restablecer el texto del botón
+  const submitBtn = form.querySelector('button[type="submit"]');
+  submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Reporte';
+}
     function cerrarSesion() {
       if (confirm('¿Está seguro que desea cerrar sesión?')) {
         document.getElementById("sidebar").style.display = "none";
