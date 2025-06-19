@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión Aduanera SENIAT</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #800000, #600000);
+    }
+
+    .login-box {
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      margin-bottom: 25px;
+      color: #800000;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background-color: #800000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+
+    .login-box button:hover {
+      background-color: #600000;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 250px;
+      height: 100%;
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #800000;
+    }
+
+    .sidebar-header h3 {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-header p {
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #800000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .logout-btn:hover {
+      background-color: #600000;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      color: white;
+      text-decoration: none;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar-nav a:hover, .sidebar-nav a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-nav a i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+      display: none;
+    }
+
+    .header {
+      background-color: #800000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .dashboard-card {
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 15px;
+      text-align: center;
+    }
+
+    .card-content h3 {
+      margin-bottom: 10px;
+      color: #800000;
+    }
+
+    .card-content p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .section-header h2 {
+      color: #800000;
+    }
+
+    .action-btn {
+      padding: 8px 15px;
+      background-color: #800000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .action-btn:hover {
+      background-color: #600000;
+    }
+
+    .secondary-btn {
+      padding: 8px 15px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .secondary-btn:hover {
+      background-color: #1a252f;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #800000;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 30px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 14px;
+      border-top: 1px solid #eee;
+      margin-top: 30px;
+    }
+
+    .notification-badge {
+      background-color: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+
+    .inventory-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .inventory-form input, .inventory-form select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .support-form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      min-height: 100px;
+    }
+
+    .notification-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+    }
+
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+
+    .notification-icon {
+      margin-right: 15px;
+      color: #800000;
+      font-size: 20px;
+    }
+
+    .email-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .email-item:last-child {
+      border-bottom: none;
+    }
+
+    .email-subject {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .email-preview {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-header h3 {
+      color: #800000;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .qr-code {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto;
+      display: block;
+      background-color: white;
+      padding: 10px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      border: none;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+    }
+
+    .tab.active {
+      background-color: #800000;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .archived {
+      background-color: #f8f8f8;
+      color: #999;
+    }
+
+    .archived td {
+      text-decoration: line-through;
+    }
+
+    .history-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-date {
+      font-weight: bold;
+      color: #800000;
+    }
+
+    .history-action {
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .inventory-form {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 20px auto;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div class="login-container" id="login-container">
+    <div class="login-box">
+      <h2>Iniciar Sesión</h2>
+      <div id="login-alert" class="alert alert-error" style="display: none;"></div>
+      <input type="text" id="usuario" placeholder="Usuario" required>
+      <input type="password" id="clave" placeholder="Contraseña" required>
+      <button onclick="login()">Entrar</button>
+      <p style="margin-top: 15px; font-size: 13px; color: #666;">Sistema de Gestión Aduanera - SENIAT Tienditas</p>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c0/LogoSENIAT.png" alt="Logo SENIAT" style="width: 100px; height: auto; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #800000;">
+        <h3>Usuario Administrador</h3>
+      <p>Administrador del Sistema</p>
+    </div>
+    
+    <button class="logout-btn" onclick="cerrarSesion()">
+      <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+    </button>
+    
+    <nav class="sidebar-nav">
+      <a href="#" onclick="mostrarInicio()" class="active">
+        <i class="fas fa-home"></i> Inicio
+      </a>
+      <a href="#" onclick="mostrarReportes()">
+        <i class="fas fa-file-alt"></i> Reportes
+        <span class="notification-badge" id="reportes-badge">3</span>
+      </a>
+      <a href="#" onclick="mostrarEstadisticas()">
+        <i class="fas fa-chart-bar"></i> Estadísticas
+      </a>
+      <a href="#" onclick="mostrarInventario()">
+        <i class="fas fa-boxes"></i> Inventario
+      </a>
+      <a href="#" onclick="mostrarDocumentos()">
+        <i class="fas fa-file-contract"></i> Documentos
+      </a>
+      <a href="#" onclick="mostrarCorreo()">
+        <i class="fas fa-envelope"></i> Correo
+        <span class="notification-badge" id="correo-badge">5</span>
+      </a>
+      <a href="#" onclick="mostrarNotificaciones()">
+        <i class="fas fa-bell"></i> Notificaciones
+        <span class="notification-badge" id="notificaciones-badge">2</span>
+      </a>
+      <a href="#" onclick="mostrarSoporte()">
+        <i class="fas fa-question-circle"></i> Soporte
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="main-content">
+    <div class="header">
+      GESTIÓN ADUANERA - SENIAT TIENDITAS
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+      <div class="dashboard-grid">
+        <div class="dashboard-card" onclick="mostrarReportes()">
+          <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-image" alt="Reportes">
+          <div class="card-content">
+            <h3>Reportes</h3>
+            <p>Gestione los reportes de importaciones y exportaciones</p>
+          </div>
+        </div>
+        
+        <div class="dashboard-card" onclick="mostrarEstadisticas()">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-image" alt="Estadísticas">
+          <div class="card-content">
+            <h3>Estadísticas</h3>
+            <p>Visualice datos estadísticos de operaciones</p>
+          </div>
+        </div>
+        
+        <div class="dashboard-card" onclick="mostrarInventario()">
+          <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-image" alt="Inventario">
+          <div class="card-content">
+            <h3>Inventario</h3>
+            <p>Administre el inventario de mercancías</p>
+          </div>
+        </div>
+        
+        <div class="dashboard-card" onclick="mostrarDocumentos()">
+          <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-image" alt="Documentos">
+          <div class="card-content">
+            <h3>Documentos</h3>
+            <p>Acceda a documentos y formatos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="reportes-section">
+  <div class="section-header">
+    <h2><i class="fas fa-file-alt"></i> Reportes de Importaciones/Exportaciones</h2>
+    <div>
+      <button class="action-btn" onclick="mostrarFormularioReporte()">
+        <i class="fas fa-plus"></i> Nuevo Reporte
+      </button>
+      <button class="action-btn" onclick="exportarReportesExcel()">
+        <i class="fas fa-file-excel"></i> Exportar a Excel
+      </button>
+    </div>
+  </div>
+  
+  <!-- Formulario para nuevo reporte (inicialmente oculto) -->
+  <div id="formulario-reporte" style="display: none; margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 5px;">
+    <h3 style="margin-bottom: 15px;">Nuevo Reporte</h3>
+    <form id="nuevo-reporte-form" onsubmit="agregarReporte(event)">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+        <div>
+          <label for="tipo-reporte">Tipo de Operación</label>
+          <select id="tipo-reporte" class="search-bar" required>
+            <option value="">Seleccione...</option>
+            <option value="Importación">Importación</option>
+            <option value="Exportación">Exportación</option>
+          </select>
+        </div>
+        <div>
+          <label for="fecha-reporte">Fecha</label>
+          <input type="date" id="fecha-reporte" class="search-bar" required>
+        </div>
+        <div>
+          <label for="producto-reporte">Producto</label>
+          <input type="text" id="producto-reporte" class="search-bar" required>
+        </div>
+        <div>
+          <label for="pais-reporte">País</label>
+          <input type="text" id="pais-reporte" class="search-bar" required>
+        </div>
+        <div>
+          <label for="cantidad-reporte">Cantidad</label>
+          <input type="number" id="cantidad-reporte" class="search-bar" required>
+        </div>
+        <div>
+          <label for="valor-reporte">Valor (USD)</label>
+          <input type="number" step="0.01" id="valor-reporte" class="search-bar" required>
+        </div>
+        <div>
+          <label for="estado-reporte">Estado</label>
+          <select id="estado-reporte" class="search-bar" required>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Rechazado">Rechazado</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="submit" class="action-btn">
+          <i class="fas fa-save"></i> Guardar Reporte
+        </button>
+        <button type="button" class="secondary-btn" onclick="ocultarFormularioReporte()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <input type="text" class="search-bar" id="filtro-reporte" placeholder="Buscar por producto, fecha o país..." onkeyup="filtrarReportes()">
+  
+  <table id="tabla-reportes">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Tipo</th>
+        <th>Producto</th>
+        <th>País</th>
+        <th>Cantidad</th>
+        <th>Valor (USD)</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpo-tabla-reportes">
+      <!-- Los reportes se cargarán dinámicamente aquí -->
+    </tbody>
+  </table>
+</div> 
+
+
+
+    <div class="section" id="estadisticas-section">
+  <div class="section-header">
+    <h2><i class="fas fa-chart-bar"></i> Estadísticas de Operaciones</h2>
+    <button class="action-btn" onclick="exportarEstadisticasExcel()">
+      <i class="fas fa-file-excel"></i> Exportar a Excel
+    </button>
+  </div>
+  
+  <div class="tabs">
+    <button class="tab active" onclick="cambiarTab('estadisticas', 'resumen')">Resumen</button>
+    <button class="tab" onclick="cambiarTab('estadisticas', 'historico')">Histórico</button>
+    <button class="tab" onclick="cambiarTab('estadisticas', 'analisis')">Análisis</button>
+  </div>
+  
+  <div id="resumen-estadisticas" class="tab-content active">
+    <div class="chart-container">
+      <canvas id="grafico-operaciones"></canvas>
+    </div>
+    
+    <div class="chart-container">
+      <canvas id="grafico-paises"></canvas>
+    </div>
+    
+    <!-- Listado resumen de operaciones por mes -->
+    <h3 style="margin-top: 30px;">Resumen de Operaciones por Mes</h3>
+    <div style="margin-bottom: 20px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Importaciones</th>
+            <th>Exportaciones</th>
+            <th>Total Operaciones</th>
+            <th>Valor Total (USD)</th>
+          </tr>
+        </thead>
+        <tbody id="resumen-mensual">
+          <!-- Los datos se llenarán dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div id="historico-estadisticas" class="tab-content">
+    <div class="chart-container">
+      <canvas id="grafico-historico"></canvas>
+    </div>
+    
+    <h3>Historial Completo</h3>
+    <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px;">
+      <div id="historial-completo">
+        <!-- Los datos históricos se cargarán aquí -->
+      </div>
+    </div>
+  </div>
+  
+  <div id="analisis-estadisticas" class="tab-content">
+    <div class="chart-container">
+      <canvas id="grafico-tendencias"></canvas>
+    </div>
+    
+    <div class="chart-container">
+      <canvas id="grafico-comparativo"></canvas>
+    </div>
+    
+    <!-- Análisis comparativo -->
+    <h3 style="margin-top: 30px;">Comparativo Mensual</h3>
+    <div style="margin-bottom: 20px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Importaciones (USD)</th>
+            <th>Exportaciones (USD)</th>
+            <th>Diferencia (USD)</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="comparativo-mensual">
+          <!-- Los datos se llenarán dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+    <!-- Inventario Section -->
+    <div class="section" id="inventario-section">
+      <div class="section-header">
+        <h2><i class="fas fa-boxes"></i> Gestión de Inventario</h2>
+        <div>
+          <button class="action-btn" onclick="exportarInventarioExcel()">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+          <button class="secondary-btn" onclick="mostrarArchivados()" id="toggle-archivados">
+            <i class="fas fa-archive"></i> Mostrar Archivados
+          </button>
+        </div>
+      </div>
+      
+      <form class="inventory-form" id="form-inventario" onsubmit="agregarProducto(event)">
+        <input type="text" id="id-producto" placeholder="ID (dejar en blanco para auto)">
+        <input type="text" id="nombre-producto" placeholder="Nombre del Producto" required>
+        <input type="number" id="cantidad-producto" placeholder="Cantidad" required>
+        <button type="submit" class="action-btn">
+          <i class="fas fa-plus"></i> Agregar
+        </button>
+      </form>
+      
+      <table id="tabla-inventario">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Fecha Ingreso</th>
+            <th>Ubicación</th>
+            <th>QR</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Los datos se llenarán dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Documentos Section -->
+    <div class="section" id="documentos-section">
+      <div class="section-header">
+        <h2><i class="fas fa-file-contract"></i> Documentos</h2>
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Tipo</th>
+            <th>Fecha</th>
+            <th>Descargar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Formulario de Importación</td>
+            <td>Formulario</td>
+            <td>2023-10-01</td>
+            <td><button class="action-btn"><i class="fas fa-download"></i> Descargar</button></td>
+          </tr>
+          <tr>
+            <td>Guía de Exportación</td>
+            <td>Guía</td>
+            <td>2023-09-15</td>
+            <td><button class="action-btn"><i class="fas fa-download"></i> Descargar</button></td>
+          </tr>
+          <tr>
+            <td>Reglamento Aduanero</td>
+            <td>Reglamento</td>
+            <td>2023-08-20</td>
+            <td><button class="action-btn"><i class="fas fa-download"></i> Descargar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Correo Section -->
+    <div class="section" id="correo-section">
+      <div class="section-header">
+        <h2><i class="fas fa-envelope"></i> Correo Electrónico</h2>
+        <button class="action-btn" onclick="mostrarFormularioCorreo()">
+          <i class="fas fa-paper-plane"></i> Nuevo Mensaje
+        </button>
+      </div>
+      
+      <div id="lista-correos">
+        <div class="email-item">
+          <div class="email-subject">Notificación de Importación Aprobada</div>
+          <div class="email-preview">Su solicitud de importación IMP-001 ha sido aprobada...</div>
+          <div style="font-size: 12px; color: #999;">15 Oct 2023</div>
+        </div>
+        <div class="email-item">
+          <div class="email-subject">Recordatorio: Documentación Pendiente</div>
+          <div class="email-preview">Favor completar la documentación para la operación EXP-002...</div>
+          <div style="font-size: 12px; color: #999;">12 Oct 2023</div>
+        </div>
+      </div>
+      
+      <div id="formulario-correo" style="display: none;">
+        <h3 style="margin-bottom: 15px;">Nuevo Mensaje</h3>
+        <form onsubmit="enviarCorreo(event)">
+          <input type="email" class="search-bar" placeholder="Para:" required>
+          <input type="text" class="search-bar" placeholder="Asunto:" required>
+          <textarea placeholder="Escribe tu mensaje aquí..." required></textarea>
+          <button type="submit" class="action-btn">
+            <i class="fas fa-paper-plane"></i> Enviar
+          </button>
+          <button type="button" class="action-btn" style="background-color: #666;" onclick="ocultarFormularioCorreo()">
+            Cancelar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notificaciones Section -->
+    <div class="section" id="notificaciones-section">
+      <div class="section-header">
+        <h2><i class="fas fa-bell"></i> Notificaciones</h2>
+        <button class="action-btn" onclick="marcarTodasComoLeidas()">
+          <i class="fas fa-check"></i> Marcar todas como leídas
+        </button>
+      </div>
+      
+      <div id="lista-notificaciones">
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div>
+            <div style="font-weight: bold;">Nuevo reporte generado</div>
+            <div style="font-size: 14px; color: #666;">Se ha generado el reporte mensual de importaciones</div>
+            <div style="font-size: 12px; color: #999;">Hace 2 horas</div>
+          </div>
+        </div>
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div>
+            <div style="font-weight: bold;">Operación aprobada</div>
+            <div style="font-size: 14px; color: #666;">La importación IMP-001 ha sido aprobada</div>
+            <div style="font-size: 12px; color: #999;">Ayer, 15:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Soporte Section -->
+    <div class="section" id="soporte-section">
+      <div class="section-header">
+        <h2><i class="fas fa-question-circle"></i> Soporte Técnico</h2>
+      </div>
+      
+      <div id="soporte-alert" class="alert alert-success" style="display: none;"></div>
+      
+      <form class="support-form" onsubmit="enviarConsultaSoporte(event)">
+        <h3 style="margin-bottom: 15px;">Enviar Consulta</h3>
+        <input type="text" class="search-bar" placeholder="Asunto" required>
+        <textarea placeholder="Describe tu problema o consulta..." required></textarea>
+        <button type="submit" class="action-btn">
+          <i class="fas fa-paper-plane"></i> Enviar Consulta
+        </button>
+      </form>
+      
+      <h3 style="margin-top: 30px; margin-bottom: 15px;">Consultas Anteriores</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Asunto</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Problema con reportes</td>
+            <td>10 Oct 2023</td>
+            <td><span style="color: green;">Resuelto</span></td>
+          </tr>
+          <tr>
+            <td>Consulta sobre inventario</td>
+            <td>5 Oct 2023</td>
+            <td><span style="color: green;">Resuelto</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <p>SENIAT Tienditas, Ureña, Venezuela | Calle #123 | paula.mendozapau@unipamplona.edu.co | +57 123 456 789</p>
+      <p style="margin-top: 10px;">© 2025 Sistema de Gestión Aduanera. Todos los derechos reservados.</p>
+    </div>
+  </div>
+
+  <!-- Modal para QR -->
+  <div class="modal" id="qr-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Código QR del Producto</h3>
+        <button class="close-modal" onclick="cerrarModal('qr-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div id="qr-code" class="qr-code"></div>
+        <p id="qr-info" style="margin-top: 15px; font-weight: bold;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn" onclick="descargarQR()">
+          <i class="fas fa-download"></i> Descargar QR
+        </button>
+        <button class="secondary-btn" onclick="cerrarModal('qr-modal')">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para editar ubicación -->
+  <div class="modal" id="ubicacion-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Ubicación del Producto</h3>
+        <button class="close-modal" onclick="cerrarModal('ubicacion-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="producto-id-editar">
+        <div style="margin-bottom: 15px;">
+          <label for="nueva-ubicacion" style="display: block; margin-bottom: 5px;">Nueva Ubicación:</label>
+          <input type="text" id="nueva-ubicacion" class="search-bar" style="width: 100%;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn" onclick="guardarUbicacion()">
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+        <button class="secondary-btn" onclick="cerrarModal('ubicacion-modal')">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    // Variables globales
+    let chartOperaciones = null;
+
+let reportes = JSON.parse(localStorage.getItem('reportes')) || [];
+let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
+
+    let chartPaises = null;
+    let chartHistorico = null;
+    let chartTendencias = null;
+    let chartComparativo = null;
+    let mostrarProductosArchivados = false;
+    
+
+    
+    // Actualizar el historial de operaciones para 2025
+const historialOperaciones = [
+  { fecha: '2025-06-15', tipo: 'Importación', producto: 'Electrodomésticos', cantidad: 1200, valor: 85000 },
+  { fecha: '2025-06-18', tipo: 'Exportación', producto: 'Café', cantidad: 500, valor: 25000 },
+  { fecha: '2025-06-20', tipo: 'Importación', producto: 'Repuestos Automotrices', cantidad: 350, valor: 42000 },
+  { fecha: '2025-05-22', tipo: 'Exportación', producto: 'Textiles', cantidad: 800, valor: 18500 },
+  { fecha: '2025-05-25', tipo: 'Importación', producto: 'Maquinaria Industrial', cantidad: 12, valor: 120000 },
+  { fecha: '2025-04-10', tipo: 'Exportación', producto: 'Productos Químicos', cantidad: 300, valor: 45000 },
+  { fecha: '2025-04-05', tipo: 'Importación', producto: 'Componentes Electrónicos', cantidad: 1500, valor: 75000 },
+  { fecha: '2025-03-18', tipo: 'Exportación', producto: 'Cacao', cantidad: 400, valor: 32000 },
+  { fecha: '2025-03-12', tipo: 'Importación', producto: 'Equipos Médicos', cantidad: 25, valor: 95000 },
+  { fecha: '2025-02-28', tipo: 'Exportación', producto: 'Frutas Tropicales', cantidad: 600, valor: 28000 },
+  { fecha: '2025-02-15', tipo: 'Importación', producto: 'Materiales de Construcción', cantidad: 800, valor: 65000 },
+  { fecha: '2025-01-30', tipo: 'Exportación', producto: 'Pescados', cantidad: 350, valor: 42000 },
+  { fecha: '2025-01-20', tipo: 'Importación', producto: 'Maquinaria Agrícola', cantidad: 10, valor: 110000 }
+];
+
+    function login() {
+      const user = document.getElementById("usuario").value.trim();
+      const pass = document.getElementById("clave").value.trim();
+      const alertBox = document.getElementById("login-alert");
+
+      if (!user || !pass) {
+        alertBox.style.display = 'block';
+        alertBox.textContent = 'Por favor ingrese usuario y contraseña';
+        return;
+      }
+
+      if (user === "admin" && pass === "1234") {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("sidebar").style.display = "block";
+        document.getElementById("main-content").style.display = "block";
+        mostrarInicio();
+      } else {
+        alertBox.style.display = 'block';
+        alertBox.textContent = 'Usuario o contraseña incorrectos';
+      }
+    }
+
+    // Funciones de navegación
+    function mostrarInicio() {
+      ocultarTodasSecciones();
+      document.getElementById("dashboard").style.display = "block";
+      actualizarMenuActivo('inicio');
+    }
+
+
+function mostrarReportes() {
+  ocultarTodasSecciones();
+  document.getElementById("reportes-section").style.display = "block";
+  actualizarMenuActivo('reportes');
+  
+  // Cargar datos en la tabla
+  mostrarReportesEnTabla();
+}
+
+
+function mostrarEstadisticas() {
+  ocultarTodasSecciones();
+  document.getElementById("estadisticas-section").style.display = "block";
+  actualizarMenuActivo('estadisticas');
+  
+  // Inicializar gráficos y tablas con datos reales
+  actualizarGraficosEstadisticas();
+  mostrarResumenMensual();
+  mostrarComparativoMensual();
+  cargarHistorialCompleto();
+}
+
+    function mostrarInventario() {
+      ocultarTodasSecciones();
+      document.getElementById("inventario-section").style.display = "block";
+      actualizarMenuActivo('inventario');
+      
+      // Actualizar tabla de inventario
+      mostrarInventarioEnTabla();
+    }
+
+    function mostrarDocumentos() {
+      ocultarTodasSecciones();
+      document.getElementById("documentos-section").style.display = "block";
+      actualizarMenuActivo('documentos');
+    }
+
+    function mostrarCorreo() {
+      ocultarTodasSecciones();
+      document.getElementById("correo-section").style.display = "block";
+      actualizarMenuActivo('correo');
+    }
+
+    function mostrarNotificaciones() {
+      ocultarTodasSecciones();
+      document.getElementById("notificaciones-section").style.display = "block";
+      actualizarMenuActivo('notificaciones');
+    }
+
+    function mostrarSoporte() {
+      ocultarTodasSecciones();
+      document.getElementById("soporte-section").style.display = "block";
+      actualizarMenuActivo('soporte');
+    }
+
+    function ocultarTodasSecciones() {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        section.style.display = 'none';
+      });
+      document.getElementById("dashboard").style.display = "none";
+    }
+
+    function actualizarMenuActivo(seccion) {
+      const links = document.querySelectorAll('.sidebar-nav a');
+      links.forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      // Encontrar el enlace correspondiente a la sección
+      const link = Array.from(links).find(l => 
+        l.textContent.includes(seccion.charAt(0).toUpperCase() + seccion.slice(1)) || 
+        (seccion === 'inicio' && l.textContent.includes('Inicio'))
+      );
+      
+      if (link) {
+        link.classList.add('active');
+      }
+    }
+
+    // Funciones de reportes
+    function filtrarReportes() {
+  const input = document.getElementById('filtro-reporte').value.toLowerCase();
+  const rows = document.querySelectorAll('#tabla-reportes tbody tr');
+  
+  rows.forEach(row => {
+    const producto = row.cells[3].textContent.toLowerCase();
+    const fecha = row.cells[1].textContent.toLowerCase();
+    const pais = row.cells[4].textContent.toLowerCase();
+    const tipo = row.cells[2].textContent.toLowerCase();
+    const id = row.cells[0].textContent.toLowerCase();
+    
+    if (producto.includes(input) || fecha.includes(input) || pais.includes(input) || tipo.includes(input) || id.includes(input)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+    function exportarReportesExcel() {
+      exportarTablaExcel('tabla-reportes', 'reportes-aduaneros');
+    }
+
+    function exportarEstadisticasExcel() {
+      // Crear un libro de Excel con múltiples hojas
+      const wb = XLSX.utils.book_new();
+      
+      // Hoja de resumen
+      const wsResumen = XLSX.utils.json_to_sheet(generarDatosResumen());
+      XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen");
+      
+      // Hoja de histórico
+      const wsHistorico = XLSX.utils.json_to_sheet(historialOperaciones);
+      XLSX.utils.book_append_sheet(wb, wsHistorico, "Histórico");
+      
+      // Hoja de inventario
+      const wsInventario = XLSX.utils.json_to_sheet(inventario.filter(item => !item.archivado));
+      XLSX.utils.book_append_sheet(wb, wsInventario, "Inventario");
+      
+      // Generar el archivo
+      XLSX.writeFile(wb, 'estadisticas_completas.xlsx');
+    }
+
+    function generarDatosResumen() {
+      return [
+        { Métrica: 'Total Importaciones', Valor: 12, 'Valor USD': 350000 },
+        { Métrica: 'Total Exportaciones', Valor: 8, 'Valor USD': 120000 },
+        { Métrica: 'Productos en Inventario', Valor: inventario.filter(item => !item.archivado).length },
+        { Métrica: 'Valor Total Inventario', 'Valor USD': 500000 },
+        { Métrica: 'Operaciones Pendientes', Valor: 3 }
+      ];
+    }
+
+    function exportarInventarioExcel() {
+      const datos = inventario.filter(item => mostrarProductosArchivados || !item.archivado);
+      
+      // Crear un libro de Excel más completo
+      const wb = XLSX.utils.book_new();
+      
+      // Hoja principal
+      const ws = XLSX.utils.json_to_sheet(datos.map(item => ({
+        ID: item.id,
+        Producto: item.nombre,
+        Cantidad: item.cantidad,
+        'Fecha Ingreso': item.fecha,
+        Ubicación: item.ubicacion,
+        Estado: item.archivado ? 'Archivado' : 'Activo',
+        'Última Modificación': new Date().toISOString().split('T')[0]
+      })));
+      
+      XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+      
+      // Hoja de resumen
+      const wsResumen = XLSX.utils.json_to_sheet([
+        { 'Total Productos': datos.length },
+        { 'Productos Activos': datos.filter(item => !item.archivado).length },
+        { 'Productos Archivados': datos.filter(item => item.archivado).length },
+        { 'Cantidad Total': datos.reduce((sum, item) => sum + item.cantidad, 0) }
+      ]);
+      XLSX.utils.book_append_sheet(wb, wsResumen, "Resumen");
+      
+      XLSX.writeFile(wb, 'inventario_completo.xlsx');
+    }
+
+    function exportarTablaExcel(idTabla, nombreArchivo) {
+      let tabla = document.getElementById(idTabla);
+      let csv = [];
+      
+      // Encabezados
+      let header = [];
+      for (let j = 0; j < tabla.rows[0].cells.length; j++) {
+        header.push(tabla.rows[0].cells[j].innerText);
+      }
+      csv.push(header.join(','));
+      
+      // Datos
+      for (let i = 1; i < tabla.rows.length; i++) {
+        let fila = [];
+        for (let j = 0; j < tabla.rows[i].cells.length; j++) {
+          fila.push(tabla.rows[i].cells[j].innerText);
+        }
+        csv.push(fila.join(','));
+      }
+      
+      let csvString = csv.join('\n');
+      let a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvString);
+      a.download = nombreArchivo + '.csv';
+      a.click();
+    }
+
+    // Funciones de estadísticas
+    function inicializarGraficos() {
+      const ctxOperaciones = document.getElementById('grafico-operaciones').getContext('2d');
+      const ctxPaises = document.getElementById('grafico-paises').getContext('2d');
+      const ctxHistorico = document.getElementById('grafico-historico').getContext('2d');
+      const ctxTendencias = document.getElementById('grafico-tendencias').getContext('2d');
+      const ctxComparativo = document.getElementById('grafico-comparativo').getContext('2d');
+      
+      // Destruir gráficos anteriores si existen
+      if (chartOperaciones) chartOperaciones.destroy();
+      if (chartPaises) chartPaises.destroy();
+      if (chartHistorico) chartHistorico.destroy();
+      if (chartTendencias) chartTendencias.destroy();
+      if (chartComparativo) chartComparativo.destroy();
+      
+      // Gráfico de operaciones por mes
+      chartOperaciones = new Chart(ctxOperaciones, {
+        type: 'bar',
+        data: {
+          labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre'],
+          datasets: [{
+            label: 'Importaciones',
+            data: [45, 60, 55, 70, 65, 80, 75, 90, 85, 100],
+            backgroundColor: 'rgba(128, 0, 0, 0.7)',
+          }, {
+            label: 'Exportaciones',
+            data: [30, 40, 35, 50, 45, 60, 55, 70, 65, 80],
+            backgroundColor: 'rgba(44, 62, 80, 0.7)',
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: 'Operaciones por Mes',
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      });
+      
+      // Gráfico de operaciones por país
+      chartPaises = new Chart(ctxPaises, {
+        type: 'pie',
+        data: {
+          labels: ['China', 'Estados Unidos', 'Colombia', 'Alemania', 'Japón', 'Otros'],
+          datasets: [{
+            data: [35, 25, 15, 10, 8, 7],
+            backgroundColor: [
+              'rgba(128, 0, 0, 0.7)',
+              'rgba(44, 62, 80, 0.7)',
+              'rgba(52, 152, 219, 0.7)',
+              'rgba(241, 196, 15, 0.7)',
+              'rgba(46, 204, 113, 0.7)',
+              'rgba(155, 89, 182, 0.7)'
+            ],
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Operaciones por País',
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      });
+      
+      // Gráfico histórico
+      chartHistorico = new Chart(ctxHistorico, {
+        type: 'line',
+        data: {
+          labels: historialOperaciones.map(op => op.fecha),
+          datasets: [{
+            label: 'Valor de Operaciones (USD)',
+            data: historialOperaciones.map(op => op.valor),
+            borderColor: 'rgba(128, 0, 0, 0.7)',
+            backgroundColor: 'rgba(128, 0, 0, 0.1)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Histórico de Operaciones',
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      });
+      
+      // Gráfico de tendencias
+      chartTendencias = new Chart(ctxTendencias, {
+        type: 'line',
+        data: {
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct'],
+          datasets: [{
+            label: 'Importaciones',
+            data: [45, 60, 55, 70, 65, 80, 75, 90, 85, 100],
+            borderColor: 'rgba(128, 0, 0, 0.7)',
+            backgroundColor: 'rgba(128, 0, 0, 0.1)',
+            fill: true
+          }, {
+            label: 'Exportaciones',
+            data: [30, 40, 35, 50, 45, 60, 55, 70, 65, 80],
+            borderColor: 'rgba(44, 62, 80, 0.7)',
+            backgroundColor: 'rgba(44, 62, 80, 0.1)',
+            fill: true
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Tendencias Mensuales',
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      });
+      
+      // Gráfico comparativo
+      chartComparativo = new Chart(ctxComparativo, {
+        type: 'bar',
+        data: {
+          labels: ['Importaciones', 'Exportaciones'],
+          datasets: [{
+            label: 'Cantidad',
+            data: [650, 420],
+            backgroundColor: 'rgba(128, 0, 0, 0.7)',
+          }, {
+            label: 'Valor (USD)',
+            data: [350000, 120000],
+            backgroundColor: 'rgba(44, 62, 80, 0.7)',
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Comparativo Importaciones vs Exportaciones',
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function cargarHistorialCompleto() {
+      const contenedor = document.getElementById('historial-completo');
+      contenedor.innerHTML = '';
+      
+      historialOperaciones.forEach(op => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+          <div class="history-date">${op.fecha}</div>
+          <div><strong>Tipo:</strong> ${op.tipo}</div>
+          <div><strong>Producto:</strong> ${op.producto}</div>
+          <div><strong>Cantidad:</strong> ${op.cantidad}</div>
+          <div><strong>Valor:</strong> $${op.valor.toLocaleString()}</div>
+          <div class="history-action">Operación registrada en el sistema</div>
+        `;
+        contenedor.appendChild(item);
+      });
+    }
+
+    function cambiarTab(seccion, tab) {
+      // Ocultar todos los tabs de la sección
+      document.querySelectorAll(`#${seccion}-section .tab-content`).forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // Mostrar el tab seleccionado
+      document.getElementById(`${tab}-${seccion}`).classList.add('active');
+      
+      // Actualizar botones de tab
+      document.querySelectorAll(`#${seccion}-section .tab`).forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      event.target.classList.add('active');
+      
+    }
+
+    // Funciones de inventario
+    function agregarProducto(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('id-producto').value.trim();
+      const nombre = document.getElementById('nombre-producto').value.trim();
+      const cantidad = parseInt(document.getElementById('cantidad-producto').value);
+
+      if (!nombre || isNaN(cantidad)) {
+        alert('Por favor ingrese un nombre y cantidad válidos');
+        return;
+      }
+
+      // Generar ID si no se proporcionó uno
+      const id = idInput || 'INV-' + (inventario.filter(item => !item.id.startsWith('INV-')).length + 1000).toString().padStart(3, '0');
+      const fecha = new Date().toISOString().split('T')[0];
+      const ubicacion = 'Almacén ' + String.fromCharCode(65 + Math.floor(Math.random() * 3));
+
+      inventario.push({ id, nombre, cantidad, fecha, ubicacion, archivado: false });
+localStorage.setItem('inventario', JSON.stringify(inventario));
+      mostrarInventarioEnTabla();
+      e.target.reset();
+
+      mostrarNotificacion('Inventario actualizado', `Se agregó ${nombre} al inventario`);
+    }
+    
+    function mostrarInventarioEnTabla() {
+      const tbody = document.querySelector('#tabla-inventario tbody');
+      tbody.innerHTML = '';
+      
+      const productosMostrar = mostrarProductosArchivados ? inventario : inventario.filter(item => !item.archivado);
+      
+      productosMostrar.forEach(item => {
+        const row = document.createElement('tr');
+        if (item.archivado) {
+          row.classList.add('archived');
+        }
+        
+        row.innerHTML = `
+          <td>${item.id}</td>
+          <td>${item.nombre}</td>
+          <td>${item.cantidad}</td>
+          <td>${item.fecha}</td>
+          <td>
+            ${item.ubicacion}
+            <button class="secondary-btn" style="padding: 3px 5px; font-size: 10px; margin-left: 5px;" 
+                    onclick="editarUbicacion('${item.id}')">
+              <i class="fas fa-edit"></i>
+            </button>
+          </td>
+          <td>
+            <button class="secondary-btn" style="padding: 5px 10px; font-size: 12px;" onclick="generarQR('${item.id}', '${item.nombre}')">
+              <i class="fas fa-qrcode"></i> Generar
+            </button>
+          </td>
+          <td>
+            ${!item.archivado ? `
+              <button class="action-btn" style="padding: 5px 10px; font-size: 12px;" onclick="editarProducto('${item.id}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-btn" style="padding: 5px 10px; font-size: 12px; background-color: #2c3e50;" onclick="archivarProducto('${item.id}')">
+                <i class="fas fa-archive"></i>
+              </button>
+              <button class="action-btn" style="padding: 5px 10px; font-size: 12px; background-color: #e74c3c;" onclick="eliminarProducto('${item.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            ` : `
+              <button class="action-btn" style="padding: 5px 10px; font-size: 12px; background-color: #27ae60;" onclick="desarchivarProducto('${item.id}')">
+                <i class="fas fa-box-open"></i>
+              </button>
+              <button class="action-btn" style="padding: 5px 10px; font-size: 12px; background-color: #e74c3c;" onclick="eliminarProducto('${item.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            `}
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function editarProducto(id) {
+      const producto = inventario.find(item => item.id === id);
+      if (producto) {
+        document.getElementById('id-producto').value = producto.id;
+        document.getElementById('nombre-producto').value = producto.nombre;
+        document.getElementById('cantidad-producto').value = producto.cantidad;
+        
+        // Eliminar el producto para reemplazarlo
+        const index = inventario.findIndex(item => item.id === id);
+        inventario.splice(index, 1);
+        
+        // Actualizar tabla
+        mostrarInventarioEnTabla();
+      }
+    }
+
+    function archivarProducto(id) {
+      if (confirm('¿Está seguro que desea archivar este producto? Podrá recuperarlo después.')) {
+        const index = inventario.findIndex(item => item.id === id);
+        if (index !== -1) {
+          inventario[index].archivado = true;
+          mostrarInventarioEnTabla();
+          mostrarNotificacion('Producto archivado', `${inventario[index].nombre} ha sido archivado`);
+        }
+      }
+    }
+
+    function desarchivarProducto(id) {
+      const index = inventario.findIndex(item => item.id === id);
+      if (index !== -1) {
+        inventario[index].archivado = false;
+        mostrarInventarioEnTabla();
+        mostrarNotificacion('Producto recuperado', `${inventario[index].nombre} ha sido activado nuevamente`);
+      }
+    }
+
+    function eliminarProducto(id) {
+      if (confirm('¿Está seguro que desea eliminar permanentemente este producto? Esta acción no se puede deshacer.')) {
+        const index = inventario.findIndex(item => item.id === id);
+        if (index !== -1) {
+          const productoEliminado = inventario[index].nombre;
+          inventario.splice(index, 1);
+          mostrarInventarioEnTabla();
+          mostrarNotificacion('Producto eliminado', `${productoEliminado} ha sido eliminado permanentemente`);
+        }
+      }
+    }
+
+    function mostrarArchivados() {
+      mostrarProductosArchivados = !mostrarProductosArchivados;
+      document.getElementById('toggle-archivados').innerHTML = `
+        <i class="fas fa-archive"></i> ${mostrarProductosArchivados ? 'Ocultar Archivados' : 'Mostrar Archivados'}
+      `;
+      mostrarInventarioEnTabla();
+    }
+
+    function editarUbicacion(id) {
+      const producto = inventario.find(item => item.id === id);
+      if (producto) {
+        document.getElementById('producto-id-editar').value = id;
+        document.getElementById('nueva-ubicacion').value = producto.ubicacion;
+        abrirModal('ubicacion-modal');
+      }
+    }
+
+    function guardarUbicacion() {
+      const id = document.getElementById('producto-id-editar').value;
+      const nuevaUbicacion = document.getElementById('nueva-ubicacion').value.trim();
+      
+      if (!nuevaUbicacion) {
+        alert('Por favor ingrese una ubicación válida');
+        return;
+      }
+      
+      const index = inventario.findIndex(item => item.id === id);
+      if (index !== -1) {
+        inventario[index].ubicacion = nuevaUbicacion;
+        mostrarInventarioEnTabla();
+        cerrarModal('ubicacion-modal');
+        mostrarNotificacion('Ubicación actualizada', `La ubicación del producto ${inventario[index].nombre} ha sido modificada`);
+      }
+    }
+
+    function generarQR(id, nombre) {
+  const producto = inventario.find(item => item.id === id);
+  if (producto) {
+    // Crear un objeto con toda la información del producto
+    const infoProducto = {
+      id: producto.id,
+      nombre: producto.nombre,
+      cantidad: producto.cantidad,
+      ubicacion: producto.ubicacion,
+      fecha: producto.fecha,
+      sistema: "SENIAT Tienditas",
+      fechaGeneracion: new Date().toISOString().split('T')[0]
+    };
+    
+    // Convertir a JSON para el código QR
+    const qrInfo = JSON.stringify(infoProducto);
+    
+    // Generar el código QR con mejor configuración
+    const qr = qrcode(0, 'H'); // Nivel de corrección de errores 'H' (alto)
+    qr.addData(qrInfo);
+    qr.make();
+    
+    // Limpiar el contenedor QR primero
+    const qrContainer = document.getElementById('qr-code');
+    qrContainer.innerHTML = '';
+    
+    // Crear la imagen del QR con tamaño adecuado
+    const qrImg = qr.createImgTag(8, 0); // Tamaño 8, sin borde
+    qrContainer.innerHTML = qrImg;
+    
+    // Ajustar estilos para mejor visualización
+    qrContainer.querySelector('img').style.width = '100%';
+    qrContainer.querySelector('img').style.height = 'auto';
+    qrContainer.querySelector('img').style.display = 'block';
+    qrContainer.querySelector('img').style.margin = '0 auto';
+    
+    document.getElementById('qr-info').textContent = `Producto: ${nombre} (${id})`;
+    abrirModal('qr-modal');
+    
+    // Agregar evento de clic para escanear (simulado)
+    const imgQR = qrContainer.querySelector('img');
+    imgQR.style.cursor = 'pointer';
+    imgQR.title = 'Haz clic para simular escaneo';
+    imgQR.onclick = function() {
+      alert(`Código QR escaneado:\n\n${qrInfo}`);
+    };
+  }
+}
+
+function descargarQR() {
+  const imgQR = document.querySelector('#qr-code img');
+  if (imgQR) {
+    // Obtener información del producto para el nombre del archivo
+    const info = document.getElementById('qr-info').textContent;
+    const nombreArchivo = `QR_${info.replace('Producto: ', '').replace(/[^a-zA-Z0-9-_]/g, '_')}.png`;
+    
+    // Crear un canvas para asegurar la calidad de la descarga
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = imgQR.naturalWidth || 300;
+    canvas.height = imgQR.naturalHeight || 300;
+    
+    // Dibujar la imagen en el canvas
+    imgQR.onload = function() {
+      ctx.drawImage(imgQR, 0, 0, canvas.width, canvas.height);
+      
+      // Crear el enlace de descarga
+      const link = document.createElement('a');
+      link.download = nombreArchivo;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+    
+    // Si la imagen ya está cargada
+    if (imgQR.complete) {
+      imgQR.onload();
+    }
+  } else {
+    alert('Primero genere un código QR');
+  }
+}
+// Después de generar el QR
+const logo = new Image();
+logo.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c0/LogoSENIAT.png';
+logo.onload = function() {
+  const canvas = document.createElement('canvas');
+  const size = 200; // Tamaño del QR
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  
+  // Dibujar QR
+  ctx.drawImage(imgQR, 0, 0, size, size);
+  
+  // Dibujar logo en el centro
+  const logoSize = size * 0.2;
+  ctx.drawImage(logo, size/2 - logoSize/2, size/2 - logoSize/2, logoSize, logoSize);
+  
+  // Reemplazar la imagen del QR
+  qrContainer.innerHTML = '';
+  const finalQR = new Image();
+  finalQR.src = canvas.toDataURL();
+  finalQR.style.width = '100%';
+  qrContainer.appendChild(finalQR);
+};
+    // Funciones de modal
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function cerrarModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    // Funciones de correo
+    function mostrarFormularioCorreo() {
+      document.getElementById('lista-correos').style.display = 'none';
+      document.getElementById('formulario-correo').style.display = 'block';
+    }
+
+    function ocultarFormularioCorreo() {
+      document.getElementById('lista-correos').style.display = 'block';
+      document.getElementById('formulario-correo').style.display = 'none';
+    }
+
+    function enviarCorreo(e) {
+      e.preventDefault();
+      ocultarFormularioCorreo();
+      mostrarNotificacion('Correo enviado', 'Tu mensaje ha sido enviado correctamente');
+    }
+
+    // Funciones de notificaciones
+    function marcarTodasComoLeidas() {
+      const badges = document.querySelectorAll('.notification-badge');
+      badges.forEach(badge => {
+        badge.style.display = 'none';
+      });
+      mostrarNotificacion('Notificaciones', 'Todas las notificaciones marcadas como leídas');
+    }
+
+    function mostrarNotificacion(titulo, mensaje) {
+      // En un sistema real, esto podría mostrar una notificación emergente
+      console.log(`Notificación: ${titulo} - ${mensaje}`);
+    }
+
+    // Funciones de soporte
+    function enviarConsultaSoporte(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById('soporte-alert');
+      alertBox.style.display = 'block';
+      alertBox.textContent = 'Tu consulta ha sido enviada al equipo de soporte. Te responderemos pronto.';
+      
+      // Limpiar formulario
+      e.target.reset();
+      
+      // Ocultar alerta después de 5 segundos
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 5000);
+    }
+
+function mostrarFormularioReporte() {
+  document.getElementById('formulario-reporte').style.display = 'block';
+  // Establecer la fecha actual (19-06-2025) por defecto
+  document.getElementById('fecha-reporte').value = '2025-06-19';
+}
+
+function ocultarFormularioReporte() {
+  document.getElementById('formulario-reporte').style.display = 'none';
+  document.getElementById('nuevo-reporte-form').reset();
+}
+
+// Función para agregar un nuevo reporte
+function agregarReporte(e) {
+  e.preventDefault();
+  
+  const tipo = document.getElementById('tipo-reporte').value;
+  const fecha = document.getElementById('fecha-reporte').value;
+  const producto = document.getElementById('producto-reporte').value;
+  const pais = document.getElementById('pais-reporte').value;
+  const cantidad = parseInt(document.getElementById('cantidad-reporte').value);
+  const valor = parseFloat(document.getElementById('valor-reporte').value);
+  const estado = document.getElementById('estado-reporte').value;
+  
+  // Generar ID único con año 2025
+  const prefix = tipo === 'Importación' ? 'IMP' : 'EXP';
+  const nextId = reportes.filter(r => r.id.startsWith(prefix) && r.id.includes('-25-')).length + 1;
+  const id = `${prefix}-25-${nextId.toString().padStart(3, '0')}`;
+  
+  // Crear nuevo reporte
+  const nuevoReporte = {
+    id,
+    fecha,
+    tipo,
+    producto,
+    pais,
+    cantidad,
+    valor,
+    estado
+  };
+  
+  // Agregar a la lista de reportes
+  reportes.unshift(nuevoReporte);
+localStorage.setItem('reportes', JSON.stringify(reportes));
+  
+  // Agregar al historial de operaciones
+  agregarAlHistorialOperaciones(nuevoReporte);
+  
+  // Actualizar la tabla de reportes
+  mostrarReportesEnTabla();
+  
+  // Actualizar estadísticas
+  if (chartOperaciones) {
+    actualizarGraficosEstadisticas();
+  }
+  
+  // Ocultar formulario y mostrar notificación
+  ocultarFormularioReporte();
+  mostrarNotificacion('Reporte agregado', `Se ha creado el reporte ${id} para ${producto}`);
+}
+
+// Función para agregar operación al historial
+function agregarAlHistorialOperaciones(reporte) {
+  historialOperaciones.unshift({
+    fecha: reporte.fecha,
+    tipo: reporte.tipo,
+    producto: reporte.producto,
+    cantidad: reporte.cantidad,
+    valor: reporte.valor
+  });
+  
+  // Mantener un máximo de 100 registros en el historial
+  if (historialOperaciones.length > 100) {
+    historialOperaciones.pop();
+  }
+}
+
+// Función para mostrar reportes en la tabla
+function mostrarReportesEnTabla() {
+  const tbody = document.getElementById('cuerpo-tabla-reportes');
+  tbody.innerHTML = '';
+  
+  reportes.forEach(reporte => {
+    const row = document.createElement('tr');
+    
+    // Determinar color del estado
+    let colorEstado = '#666';
+    if (reporte.estado === 'Aprobado') colorEstado = 'green';
+    if (reporte.estado === 'Rechazado') colorEstado = 'red';
+    if (reporte.estado === 'Pendiente') colorEstado = 'orange';
+    
+    row.innerHTML = `
+      <td>${reporte.id}</td>
+      <td>${reporte.fecha}</td>
+      <td>${reporte.tipo}</td>
+      <td>${reporte.producto}</td>
+      <td>${reporte.pais}</td>
+      <td>${reporte.cantidad.toLocaleString()}</td>
+      <td>$${reporte.valor.toLocaleString()}</td>
+      <td><span style="color: ${colorEstado};">${reporte.estado}</span></td>
+      <td>
+        <button class="action-btn" style="padding: 5px 10px; font-size: 12px;" onclick="editarReporte('${reporte.id}')">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn" style="padding: 5px 10px; font-size: 12px; background-color: #e74c3c;" onclick="eliminarReporte('${reporte.id}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Función para editar reporte
+function editarReporte(id) {
+  const reporte = reportes.find(r => r.id === id);
+  if (reporte) {
+    // Mostrar formulario con datos del reporte
+    mostrarFormularioReporte();
+    
+    // Llenar formulario con datos existentes
+    document.getElementById('tipo-reporte').value = reporte.tipo;
+    document.getElementById('fecha-reporte').value = reporte.fecha;
+    document.getElementById('producto-reporte').value = reporte.producto;
+    document.getElementById('pais-reporte').value = reporte.pais;
+    document.getElementById('cantidad-reporte').value = reporte.cantidad;
+    document.getElementById('valor-reporte').value = reporte.valor;
+    document.getElementById('estado-reporte').value = reporte.estado;
+    
+    // Cambiar el formulario a modo edición
+    const form = document.getElementById('nuevo-reporte-form');
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      actualizarReporte(id);
+    };
+    
+    // Cambiar texto del botón
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="fas fa-save"></i> Actualizar Reporte';
+  }
+}
+
+// Función para actualizar reporte
+function actualizarReporte(id) {
+  const index = reportes.findIndex(r => r.id === id);
+  if (index !== -1) {
+    const tipo = document.getElementById('tipo-reporte').value;
+    const fecha = document.getElementById('fecha-reporte').value;
+    const producto = document.getElementById('producto-reporte').value;
+    const pais = document.getElementById('pais-reporte').value;
+    const cantidad = parseInt(document.getElementById('cantidad-reporte').value);
+    const valor = parseFloat(document.getElementById('valor-reporte').value);
+    const estado = document.getElementById('estado-reporte').value;
+    
+    // Actualizar reporte
+    reportes[index] = {
+      ...reportes[index],
+      tipo,
+      fecha,
+      producto,
+      pais,
+      cantidad,
+      valor,
+      estado
+    };
+    
+    // Actualizar historial si corresponde
+    const historialIndex = historialOperaciones.findIndex(op => 
+      op.fecha === fecha && op.producto === producto && op.tipo === tipo);
+    if (historialIndex !== -1) {
+      historialOperaciones[historialIndex] = {
+        fecha,
+        tipo,
+        producto,
+        cantidad,
+        valor
+      };
+    }
+    
+    // Actualizar la tabla y gráficos
+    mostrarReportesEnTabla();
+    if (chartOperaciones) {
+      actualizarGraficosEstadisticas();
+    }
+    
+    // Ocultar formulario y mostrar notificación
+    ocultarFormularioReporte();
+    mostrarNotificacion('Reporte actualizado', `El reporte ${id} ha sido modificado`);
+  }
+}
+
+// Función para eliminar reporte
+function eliminarReporte(id) {
+  if (confirm(`¿Está seguro que desea eliminar el reporte ${id}? Esta acción no se puede deshacer.`)) {
+    const index = reportes.findIndex(r => r.id === id);
+    if (index !== -1) {
+      const reporteEliminado = reportes[index];
+      
+      // Eliminar de reportes
+      reportes.splice(index, 1);
+      
+      // Eliminar del historial si existe
+      const historialIndex = historialOperaciones.findIndex(op => 
+        op.fecha === reporteEliminado.fecha && 
+        op.producto === reporteEliminado.producto && 
+        op.tipo === reporteEliminado.tipo);
+      
+      if (historialIndex !== -1) {
+        historialOperaciones.splice(historialIndex, 1);
+      }
+      
+      // Actualizar la tabla y gráficos
+      mostrarReportesEnTabla();
+      if (chartOperaciones) {
+        actualizarGraficosEstadisticas();
+      }
+      
+      mostrarNotificacion('Reporte eliminado', `El reporte ${id} ha sido eliminado`);
+    }
+  }
+}
+
+// Función para actualizar gráficos estadísticos
+function actualizarGraficosEstadisticas() {
+  // Destruir gráficos existentes
+  if (chartOperaciones) chartOperaciones.destroy();
+  if (chartPaises) chartPaises.destroy();
+  if (chartHistorico) chartHistorico.destroy();
+  if (chartTendencias) chartTendencias.destroy();
+  if (chartComparativo) chartComparativo.destroy();
+  
+  // Volver a inicializar con datos actualizados
+  inicializarGraficos();
+  cargarHistorialCompleto();
+}
+
+// Función para filtrar reportes
+function filtrarReportes() {
+  const input = document.getElementById('filtro-reporte').value.toLowerCase();
+  const rows = document.querySelectorAll('#tabla-reportes tbody tr');
+  
+  rows.forEach(row => {
+    const producto = row.cells[3].textContent.toLowerCase();
+    const fecha = row.cells[1].textContent.toLowerCase();
+    const pais = row.cells[4].textContent.toLowerCase();
+    const tipo = row.cells[2].textContent.toLowerCase();
+    
+    if (producto.includes(input) || fecha.includes(input) || pais.includes(input) || tipo.includes(input)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+function obtenerResumenMensual() {
+  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  const añoActual = 2025; // Fijamos el año actual como 2025
+  const mesActual = new Date().getMonth(); // Esto sería 5 para Junio (0-11)
+  
+  // Crear estructura para almacenar los datos por mes
+  const resumen = {};
+  
+  // Inicializar todos los meses hasta el actual
+  for (let i = 0; i <= mesActual; i++) {
+    resumen[i] = {
+      importaciones: 0,
+      exportaciones: 0,
+      valorImportaciones: 0,
+      valorExportaciones: 0
+    };
+  }
+  
+  // Procesar todos los reportes
+  reportes.forEach(reporte => {
+    const fecha = new Date(reporte.fecha);
+    const mes = fecha.getMonth();
+    const año = fecha.getFullYear();
+    
+    // Solo considerar el año 2025 y meses hasta el actual
+    if (año === añoActual && mes <= mesActual) {
+      if (reporte.tipo === 'Importación') {
+        resumen[mes].importaciones++;
+        resumen[mes].valorImportaciones += reporte.valor;
+      } else if (reporte.tipo === 'Exportación') {
+        resumen[mes].exportaciones++;
+        resumen[mes].valorExportaciones += reporte.valor;
+      }
+    }
+  });
+  
+  return { meses, resumen, mesActual };
+}
+
+// Función para mostrar el resumen mensual en la tabla
+function mostrarResumenMensual() {
+  const { meses, resumen, mesActual } = obtenerResumenMensual();
+  const tbody = document.getElementById('resumen-mensual');
+  tbody.innerHTML = '';
+  
+  for (let i = 0; i <= mesActual; i++) {
+    const row = document.createElement('tr');
+    const totalOperaciones = resumen[i].importaciones + resumen[i].exportaciones;
+    const valorTotal = resumen[i].valorImportaciones + resumen[i].valorExportaciones;
+    
+    row.innerHTML = `
+      <td>${meses[i]}</td>
+      <td>${resumen[i].importaciones}</td>
+      <td>${resumen[i].exportaciones}</td>
+      <td>${totalOperaciones}</td>
+      <td>$${valorTotal.toLocaleString()}</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+
+// Función para mostrar el comparativo mensual
+function mostrarComparativoMensual() {
+  const { meses, resumen, mesActual } = obtenerResumenMensual();
+  const tbody = document.getElementById('comparativo-mensual');
+  tbody.innerHTML = '';
+  
+  for (let i = 0; i <= mesActual; i++) {
+    const row = document.createElement('tr');
+    const diferencia = resumen[i].valorImportaciones - resumen[i].valorExportaciones;
+    const balance = diferencia >= 0 ? 'Negativo' : 'Positivo';
+    const balanceClass = diferencia >= 0 ? 'style="color: red;"' : 'style="color: green;"';
+    
+    row.innerHTML = `
+      <td>${meses[i]}</td>
+      <td>$${resumen[i].valorImportaciones.toLocaleString()}</td>
+      <td>$${resumen[i].valorExportaciones.toLocaleString()}</td>
+      <td>$${Math.abs(diferencia).toLocaleString()}</td>
+      <td ${balanceClass}>${balance}</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+
+// Función para actualizar los gráficos con datos reales
+function actualizarGraficosEstadisticas() {
+  const { meses, resumen, mesActual } = obtenerResumenMensual();
+  
+  // Datos para gráficos
+  const mesesMostrar = meses.slice(0, mesActual + 1);
+  const importacionesData = [];
+  const exportacionesData = [];
+  const valoresImportaciones = [];
+  const valoresExportaciones = [];
+  
+  for (let i = 0; i <= mesActual; i++) {
+    importacionesData.push(resumen[i].importaciones);
+    exportacionesData.push(resumen[i].exportaciones);
+    valoresImportaciones.push(resumen[i].valorImportaciones);
+    valoresExportaciones.push(resumen[i].valorExportaciones);
+  }
+  
+  // Destruir gráficos anteriores si existen
+  if (chartOperaciones) chartOperaciones.destroy();
+  if (chartPaises) chartPaises.destroy();
+  if (chartHistorico) chartHistorico.destroy();
+  if (chartTendencias) chartTendencias.destroy();
+  if (chartComparativo) chartComparativo.destroy();
+  
+  // Gráfico de operaciones por mes (cantidad)
+  const ctxOperaciones = document.getElementById('grafico-operaciones').getContext('2d');
+  chartOperaciones = new Chart(ctxOperaciones, {
+    type: 'bar',
+    data: {
+      labels: mesesMostrar,
+      datasets: [{
+        label: 'Importaciones',
+        data: importacionesData,
+        backgroundColor: 'rgba(128, 0, 0, 0.7)',
+      }, {
+        label: 'Exportaciones',
+        data: exportacionesData,
+        backgroundColor: 'rgba(44, 62, 80, 0.7)',
+      }]
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Cantidad de Operaciones'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Meses del Año'
+          }
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Operaciones por Mes (Cantidad)',
+          font: {
+            size: 16
+          }
+        },
+        tooltip: {
+          callbacks: {
+            afterBody: function(context) {
+              const datasetIndex = context[0].datasetIndex;
+              const dataIndex = context[0].dataIndex;
+              const valor = datasetIndex === 0 ? 
+                valoresImportaciones[dataIndex] : 
+                valoresExportaciones[dataIndex];
+              return `Valor total: $${valor.toLocaleString()}`;
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Gráfico de operaciones por país
+  const paisesData = {};
+  reportes.forEach(reporte => {
+    if (!paisesData[reporte.pais]) {
+      paisesData[reporte.pais] = { count: 0, valor: 0 };
+    }
+    paisesData[reporte.pais].count++;
+    paisesData[reporte.pais].valor += reporte.valor;
+  });
+  
+  const paisesOrdenados = Object.keys(paisesData).sort((a, b) => paisesData[b].count - paisesData[a].count);
+  const topPaises = paisesOrdenados.slice(0, 6); // Mostrar top 6 países
+  
+  const ctxPaises = document.getElementById('grafico-paises').getContext('2d');
+  chartPaises = new Chart(ctxPaises, {
+    type: 'pie',
+    data: {
+      labels: topPaises,
+      datasets: [{
+        data: topPaises.map(pais => paisesData[pais].count),
+        backgroundColor: [
+          'rgba(128, 0, 0, 0.7)',
+          'rgba(44, 62, 80, 0.7)',
+          'rgba(52, 152, 219, 0.7)',
+          'rgba(241, 196, 15, 0.7)',
+          'rgba(46, 204, 113, 0.7)',
+          'rgba(155, 89, 182, 0.7)'
+        ],
+      }]
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Distribución por País (Top 6)',
+          font: {
+            size: 16
+          }
+        },
+        tooltip: {
+          callbacks: {
+            afterLabel: function(context) {
+              const pais = context.label;
+              return `Valor total: $${paisesData[pais].valor.toLocaleString()}`;
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Gráfico histórico (valor de operaciones)
+  const ctxHistorico = document.getElementById('grafico-historico').getContext('2d');
+  chartHistorico = new Chart(ctxHistorico, {
+    type: 'line',
+    data: {
+      labels: historialOperaciones.map(op => op.fecha),
+      datasets: [{
+        label: 'Valor de Operaciones (USD)',
+        data: historialOperaciones.map(op => op.valor),
+        borderColor: 'rgba(128, 0, 0, 0.7)',
+        backgroundColor: 'rgba(128, 0, 0, 0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Histórico de Operaciones (Valor en USD)',
+          font: {
+            size: 16
+          }
+        }
+      }
+    }
+  });
+  
+  // Gráfico de tendencias (valor mensual)
+  const ctxTendencias = document.getElementById('grafico-tendencias').getContext('2d');
+  chartTendencias = new Chart(ctxTendencias, {
+    type: 'line',
+    data: {
+      labels: mesesMostrar,
+      datasets: [{
+        label: 'Importaciones (USD)',
+        data: valoresImportaciones,
+        borderColor: 'rgba(128, 0, 0, 0.7)',
+        backgroundColor: 'rgba(128, 0, 0, 0.1)',
+        fill: true
+      }, {
+        label: 'Exportaciones (USD)',
+        data: valoresExportaciones,
+        borderColor: 'rgba(44, 62, 80, 0.7)',
+        backgroundColor: 'rgba(44, 62, 80, 0.1)',
+        fill: true
+      }]
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Tendencias Mensuales (Valor en USD)',
+          font: {
+            size: 16
+          }
+        }
+      }
+    }
+  });
+  
+  // Gráfico comparativo (valor total)
+
+ const ctxComparativo = document.getElementById('grafico-comparativo').getContext('2d');
+  chartComparativo = new Chart(ctxComparativo, {
+    type: 'bar',
+    data: {
+      labels: ['Importaciones', 'Exportaciones'],
+      datasets: [{
+        label: 'Cantidad',
+        data: [
+          importacionesData.reduce((a, b) => a + b, 0),
+          exportacionesData.reduce((a, b) => a + b, 0)
+        ],
+        backgroundColor: 'rgba(128, 0, 0, 0.7)',
+      }, {
+        label: 'Valor (USD)',
+        data: [
+          valoresImportaciones.reduce((a, b) => a + b, 0),
+          valoresExportaciones.reduce((a, b) => a + b, 0)
+        ],
+        backgroundColor: 'rgba(44, 62, 80, 0.7)',
+      }]
+    },
+    options: { 
+      responsive: true, 
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Comparativo Anual Importaciones vs Exportaciones',
+          font: {
+            size: 16
+          }
+        }
+      }
+    }
+  });
+}
+
+    function cerrarSesion() {
+      if (confirm('¿Está seguro que desea cerrar sesión?')) {
+        document.getElementById("sidebar").style.display = "none";
+        document.getElementById("main-content").style.display = "none";
+        document.getElementById("login-container").style.display = "flex";
+        document.getElementById("usuario").value = "";
+        document.getElementById("clave").value = "";
+      }
+    }
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mostrar algunos datos de prueba
+      mostrarInventarioEnTabla();
+    });
+  </script>
+  
+</body>
+</html> 
