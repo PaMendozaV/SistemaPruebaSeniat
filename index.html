@@ -1056,6 +1056,7 @@
 
 let reportes = JSON.parse(localStorage.getItem('reportes')) || [];
 let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
+let historialOperaciones=JSON.parse(localStorage.getItem('reportes')) || [];
 
     let chartPaises = null;
     let chartHistorico = null;
@@ -1064,23 +1065,7 @@ let inventario = JSON.parse(localStorage.getItem('inventario')) || [];
     let mostrarProductosArchivados = false;
     
 
-    
-    // Actualizar el historial de operaciones para 2025
-const historialOperaciones = [
-  { fecha: '2025-06-15', tipo: 'Importación', producto: 'Electrodomésticos', cantidad: 1200, valor: 85000 },
-  { fecha: '2025-06-18', tipo: 'Exportación', producto: 'Café', cantidad: 500, valor: 25000 },
-  { fecha: '2025-06-20', tipo: 'Importación', producto: 'Repuestos Automotrices', cantidad: 350, valor: 42000 },
-  { fecha: '2025-05-22', tipo: 'Exportación', producto: 'Textiles', cantidad: 800, valor: 18500 },
-  { fecha: '2025-05-25', tipo: 'Importación', producto: 'Maquinaria Industrial', cantidad: 12, valor: 120000 },
-  { fecha: '2025-04-10', tipo: 'Exportación', producto: 'Productos Químicos', cantidad: 300, valor: 45000 },
-  { fecha: '2025-04-05', tipo: 'Importación', producto: 'Componentes Electrónicos', cantidad: 1500, valor: 75000 },
-  { fecha: '2025-03-18', tipo: 'Exportación', producto: 'Cacao', cantidad: 400, valor: 32000 },
-  { fecha: '2025-03-12', tipo: 'Importación', producto: 'Equipos Médicos', cantidad: 25, valor: 95000 },
-  { fecha: '2025-02-28', tipo: 'Exportación', producto: 'Frutas Tropicales', cantidad: 600, valor: 28000 },
-  { fecha: '2025-02-15', tipo: 'Importación', producto: 'Materiales de Construcción', cantidad: 800, valor: 65000 },
-  { fecha: '2025-01-30', tipo: 'Exportación', producto: 'Pescados', cantidad: 350, valor: 42000 },
-  { fecha: '2025-01-20', tipo: 'Importación', producto: 'Maquinaria Agrícola', cantidad: 10, valor: 110000 }
-];
+
 
     function login() {
       const user = document.getElementById("usuario").value.trim();
