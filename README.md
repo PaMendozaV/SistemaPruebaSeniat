@@ -1,2 +1,0 @@
-# SistemaPruebaSeniat
-Pagina Web Prueba 
